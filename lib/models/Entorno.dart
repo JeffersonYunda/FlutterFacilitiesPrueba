@@ -1,25 +1,26 @@
 class Entorno {
 
-  late String icon;
-  late bool workspace;
-  late bool parking;
-  late bool meeting;
- // late int accentColor;
+  String icon;
+  bool workspace_reservation_enabled;
+  bool parking_reservation_enabled;
+  bool meeting_room_reservation_enabled;
  // late int primaryColor;
  // late int secondaryColor;
 
-  Entorno(String icon, bool workspace, bool parking, bool meeting) {
+  Entorno({
+    required this.icon,
+    required this.workspace_reservation_enabled,
+    required this.parking_reservation_enabled,
+    required this.meeting_room_reservation_enabled,
+  });
 
-    this.icon = icon;
-    this.workspace = workspace;
-    this.parking = parking;
-    this.meeting = meeting;
-   // this.accentColor = accentColor;
-   // this.primaryColor = primaryColor;
-   // this.secondaryColor = secondaryColor;
-
+  factory Entorno.fromJson(Map<String, dynamic> json){
+    return Entorno(
+      icon: json["icon"],
+      workspace_reservation_enabled: json["workspace_reservation_enabled"],
+      parking_reservation_enabled: json["parking_reservation_enabled"],
+      meeting_room_reservation_enabled: json["meeting_room_reservation_enabled"],
+    );
   }
-
-
 
 }

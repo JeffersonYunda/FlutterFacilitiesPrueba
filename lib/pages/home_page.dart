@@ -8,23 +8,20 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
 
+  var entornos;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
-    HttpHandler httpHandler = new HttpHandler();
-    httpHandler.getEntorno();
     getListaEntornos();
   }
 
   Future<Null> getListaEntornos() async {
     setState(() {
-
+        entornos = HttpHandler().getEntorno();
     });
 
-    //Probablemente haya otra manera mas limpia de hacer esto, no se si es lo
-    //recomendado por flutter
     return null;
   }
 
@@ -33,11 +30,7 @@ class _HomePageState extends State<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Center(
-        child: Column(
-          children: <Widget> [
-            Text('HOME'),
-          ],
-        ),
+        child: Text('HOME'),
       ),
     );
   }

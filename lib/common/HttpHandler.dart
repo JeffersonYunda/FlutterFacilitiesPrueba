@@ -9,27 +9,23 @@ class HttpHandler {
 
   final String _baseUrl = "https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io";
 
-  Future<List<Entorno>> getEntorno() async {
+  Future<Entorno> getEntorno() async {
     final response = await http.get(Uri.parse(_baseUrl + "/configuration/CUATROOCHENTA"));
 
-    List<Entorno> entornos = [];
-
     if(response.statusCode == 200){
-      var map = jsonDecode(response.body);
-      for (var item in map) {
-        entornos.add(Entorno(item["icon"], item["workspace_reservation_enabled"], item["parking_reservation_enabled"], item["meeting_room_reservation_enabled"]));
-      }
+      var entorno = jsonDecode(response.body);
 
-      
-      for(var entorno in entornos) {
-        print("Icon: " + entorno.icon);
-        print("Workspace: " + entorno.workspace.toString());
-        print("Parking: " + entorno.parking.toString());
-        print("Meeting: " + entorno.meeting.toString());
-      }
-       
+      Entorno temp = Entorno.fromJson(entorno);
 
-      return entornos;
+      print("Imprimiendo desde http");
+      print(temp.icon);
+      print(temp.meeting_room_reservation_enabled);
+      print(temp.parking_reservation_enabled);
+      print(temp.workspace_reservation_enabled);
+
+
+      return Entorno.fromJson(entorno);
+
     } else {
       throw Exception("Fallo al conectar");
     }
