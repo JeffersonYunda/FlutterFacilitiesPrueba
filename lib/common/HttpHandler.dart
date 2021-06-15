@@ -7,7 +7,7 @@ class HttpHandler {
 
   final String _baseUrl = "";
 
-  Future<List<Edificio>> getReservaCampoUno() async {
+  Future<List<Edificio>> Jefferson() async {
     final response = await http.get(Uri.parse(_baseUrl + ""));
 
     List<Edificio> edificios = [];
