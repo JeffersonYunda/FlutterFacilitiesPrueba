@@ -24,4 +24,21 @@ class HttpHandler {
     }
   }
 
+  Future<List<Edificio>> Franky() async {
+    final response = await http.get(Uri.parse(_baseUrl + ""));
+
+    List<Edificio> edificios = [];
+
+    if(response.statusCode == 200){
+      var map = jsonDecode(response.body);
+      for (var item in map) {
+
+      }
+
+      return edificios;
+    } else {
+      throw Exception("Fallo al conectar");
+    }
+  }
+
 }

@@ -42,16 +42,19 @@ class ReservarPuestoPage extends StatelessWidget{
               //Este espacio deberia calcularse de otra manera o
               //si se usa un SizedBox la altura deberia estar expresada
               //en tanto por ciento
+              /*
               SizedBox(
                 height: 200,
               ),
-
+*/
               //Boton de reservar
+              /*
               BotonAzul(
                   text: "Reservar puesto",
                   onPressed: (){}
               )
 
+               */
             ],
           ),
         ),
@@ -114,7 +117,9 @@ class __FormState extends State<_FormularioReservasPuesto> {
               title: "Edificio"
           ),
 
+
           //Espacio
+          /*
           SizedBox(
             height: 10,
           ),
@@ -186,7 +191,7 @@ class __FormState extends State<_FormularioReservasPuesto> {
             selectedColor: Colors.black,
             selectedIconColor: Colors.black,
           )
-
+*/
         ],
       ),
     );
