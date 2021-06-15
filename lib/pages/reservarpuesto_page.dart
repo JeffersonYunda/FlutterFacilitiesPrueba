@@ -62,7 +62,9 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
           child: Column(
             children: [
               //Formulario
-              _FormularioReservasPuesto(),
+              //Aqui necesitamos un Future Builder...que ya lo haremos mañana
+
+              //_FormularioReservasPuesto(),
 
               //Espacio entre el formulario y el boton
               //Este espacio deberia calcularse de otra manera o

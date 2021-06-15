@@ -1,4 +1,4 @@
-import 'package:facilities_v1/models/FacilityModelBak.dart';
+import 'package:facilities_v1/models/FacilityModel.dart';
 
 class BuildingModel{
   String facility_name;

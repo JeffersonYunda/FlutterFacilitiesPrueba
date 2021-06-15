@@ -13,7 +13,7 @@ class MyApp extends StatelessWidget{
   Widget build(BuildContext context){
     return MaterialApp(
       title: 'Reservas',
-      initialRoute: 'home',
+      initialRoute: 'reservar_puesto',
       routes: appRoutes,
     );
   }
