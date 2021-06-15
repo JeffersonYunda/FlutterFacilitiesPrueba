@@ -1,4 +1,5 @@
 import 'package:facilities_v1/custom_input/boton_azul.dart';
+import 'package:facilities_v1/custom_input/checkbox_days.dart';
 import 'package:facilities_v1/custom_input/custom_input.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -34,8 +35,13 @@ class ReservarPuestoPage extends StatelessWidget{
           //height: MediaQuery.of(context).size.height * 0.9,
           child: Column(
             children: [
+              //Formulario
               _FormularioReservasPuesto(),
 
+              //Espacio entre el formulario y el boton
+              //Este espacio deberia calcularse de otra manera o
+              //si se usa un SizedBox la altura deberia estar expresada
+              //en tanto por ciento
               SizedBox(
                 height: 200,
               ),
@@ -52,7 +58,6 @@ class ReservarPuestoPage extends StatelessWidget{
       )
     );
   }
-
 }
 
 class _FormularioReservasPuesto extends StatefulWidget{
@@ -170,13 +175,17 @@ class __FormState extends State<_FormularioReservasPuesto> {
                   onPressed: (){},
                 ),
               )
-
-
             ],
-          )
+          ),
 
           //Dias de la semana
-
+          CheckboxDay(
+            isChecked: true,
+            size: 50,
+            iconSize: 50,
+            selectedColor: Colors.black,
+            selectedIconColor: Colors.black,
+          )
 
         ],
       ),
