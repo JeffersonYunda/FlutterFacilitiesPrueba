@@ -1,10 +1,36 @@
+import 'package:facilities_v1/common/HttpHandler.dart';
 import 'package:facilities_v1/custom_input/boton_azul.dart';
 import 'package:facilities_v1/custom_input/checkbox_days.dart';
 import 'package:facilities_v1/custom_input/custom_input.dart';
+import 'package:facilities_v1/models/BuildingModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
-class ReservarPuestoPage extends StatelessWidget{
+class ReservarPuestoPage extends StatefulWidget{
+
+  @override
+  _ReservarPuestoPageState createState() => _ReservarPuestoPageState();
+}
+
+class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
+
+  var listaEdificios;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getListaEdificios();
+  }
+
+  Future<Null> getListaEdificios() async{
+    setState(() {
+      listaEdificios = HttpHandler().getFacilitiesAvailables();
+
+      print("Recibido fuera del Http");
+      //print((listaEdificios as BuildingModel).facility_name);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
