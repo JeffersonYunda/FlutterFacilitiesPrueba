@@ -243,19 +243,20 @@ class _TablaDosState extends State<TablaDos> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getListaEdificios();
+   // getListaEdificios();
     setState(() {
 
     });
   }
 
 
-
+  /*
   Future<Null> getListaEdificios() async {
     setState(() {
       listaEntidad = HttpHandler().getEntities();
     });
   }
+   */
 
 
 

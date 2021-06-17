@@ -14,7 +14,7 @@ class MyApp extends StatelessWidget{
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Reservas',
-      initialRoute: 'home',
+      initialRoute: 'reservar_puesto',
       routes: appRoutes,
     );
   }
