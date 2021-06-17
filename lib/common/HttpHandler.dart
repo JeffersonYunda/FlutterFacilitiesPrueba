@@ -3,6 +3,7 @@ import 'package:facilities_v1/models/BuildingModel.dart';
 import 'package:facilities_v1/models/Edificio.dart';
 import 'package:facilities_v1/models/Entorno.dart';
 import 'package:facilities_v1/models/FacilityModel.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 
@@ -36,25 +37,56 @@ class HttpHandler {
   //Future<void> getFacilitiesAvailables() async {
 
     //Realizamos peticion a la URL de 480
-    final response = await http.post(Uri.parse(_baseUrl + "/facility/search"));
+    //final response = await http.post(Uri.parse(_baseUrl + "/facility/search"));
+    final response = await rootBundle.loadString('assets/falsos_json/raiz.json');
 
+    var edificio = json.decode(response);
+
+    return BuildingModel.fromJson(edificio);
+
+    /*
     //Comprobamos que la descarga vaya Ok
     if(response.statusCode == 200){
       //Decodificamos el JSON que nso mandan
       var edificio = jsonDecode(response.body);
 
-      /*
-      BuildingModel temp = BuildingModel.fromJson(edificio);
 
-      print("Imprimiendo desde http");
-      print(temp.facility_name);
-      print(temp.facilities[0].name);
-*/
       return BuildingModel.fromJson(edificio);
 
     } else {
       throw Exception("Fallo al conectar");
     }
+
+     */
   }
+
+  Future<BuildingModel> getEntities() async {
+    //Future<void> getFacilitiesAvailables() async {
+
+    //Realizamos peticion a la URL de 480
+    //final response = await http.post(Uri.parse(_baseUrl + "/facility/search"));
+    final response = await rootBundle.loadString('assets/falsos_json/entidad.json');
+
+    var edificio = json.decode(response);
+
+    return BuildingModel.fromJson(edificio);
+
+    /*
+    //Comprobamos que la descarga vaya Ok
+    if(response.statusCode == 200){
+      //Decodificamos el JSON que nso mandan
+      var edificio = jsonDecode(response.body);
+
+
+      return BuildingModel.fromJson(edificio);
+
+    } else {
+      throw Exception("Fallo al conectar");
+    }
+
+     */
+  }
+
+
 
 }

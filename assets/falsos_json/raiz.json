@@ -1,0 +1,26 @@
+{
+  "facility_name": "Edificio",
+  "facilities": [{
+    "id": "EDIFICIO_ESPAITEC_1",
+    "name": "Edificio Espaitec 1",
+    "image": null,
+    "is_selectable": false,
+    "forge_2d_url": null,
+    "forge_3d_url": null,
+    "forge_element_id": null,
+    "coordinates_2d": null,
+    "children_name": "Nº de planta"
+  },
+    {
+      "id": "EDIFICIO_ESPAITEC_2",
+      "name": "Edificio Espaitec 2",
+      "image": null,
+      "is_selectable": false,
+      "forge_2d_url": null,
+      "forge_3d_url": null,
+      "forge_element_id": null,
+      "coordinates_2d": null,
+      "children_name": "Nº de planta"
+    }
+  ]
+}

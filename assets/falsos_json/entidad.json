@@ -1,0 +1,49 @@
+{
+  "facility_name": "Nº de planta",
+  "facilities": [
+    {
+      "id": "EDIFICIO_ESPAITEC_2_PLANTA_1",
+      "name": "Planta 1",
+      "image": null,
+      "is_selectable": false,
+      "forge_2d_url": null,
+      "forge_3d_url": null,
+      "forge_element_id": null,
+      "coordinates_2d": null,
+      "children_name": "Zona"
+    },
+    {
+      "id": "EDIFICIO_ESPAITEC_2_PLANTA_2",
+      "name": "Planta 2",
+      "image": null,
+      "is_selectable": false,
+      "forge_2d_url": null,
+      "forge_3d_url": null,
+      "forge_element_id": null,
+      "coordinates_2d": null,
+      "children_name": "Zona"
+    },
+    {
+      "id": "EDIFICIO_ESPAITEC_2_PLANTA_3",
+      "name": "Planta 3",
+      "image": null,
+      "is_selectable": false,
+      "forge_2d_url": null,
+      "forge_3d_url": null,
+      "forge_element_id": null,
+      "coordinates_2d": null,
+      "children_name": "Zona"
+    },
+    {
+      "id": "EDIFICIO_ESPAITEC_2_PLANTA_4",
+      "name": "Planta 4",
+      "image": null,
+      "is_selectable": false,
+      "forge_2d_url": null,
+      "forge_3d_url": null,
+      "forge_element_id": null,
+      "coordinates_2d": null,
+      "children_name": "Zona"
+    }
+  ]
+}
