@@ -7,6 +7,11 @@ import 'package:facilities_v1/models/FacilityModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+List<Widget> listaWidget = [];
+var listaEdificios;
+var lista_temp;
+late BuildingModel model;
+
 class ReservarPuestoPage extends StatefulWidget {
   @override
   _ReservarPuestoPageState createState() => _ReservarPuestoPageState();
@@ -14,33 +19,46 @@ class ReservarPuestoPage extends StatefulWidget {
 
 class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
   var listaEdificios;
-
-  bool _visible = false;
+  var lista_temp;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     getListaEdificios();
-    setState(() {
-
-    });
   }
 
-  void devolverDatos(bool visible, String nombre) {
-    if(nombre == "Edificio Espaitec 1") {
-      _visible = visible;
-    }
-  }
 
   Future<Null> getListaEdificios() async {
+
+
+    lista_temp = HttpHandler().getFacilitiesAvailables();
+    model = await HttpHandler().getFacilitiesAvailables();
+
     setState(() {
-      listaEdificios = HttpHandler().getFacilitiesAvailables();
+
+      listaWidget.add(DropdownCustom(building: model));
+
+      //print("Obteniendo: ${model.facility_name}");
+
+     // print(moderl.facility_name);
+      listaEdificios =  lista_temp;
     });
+
+
+
+      //listaWidget.add(Text("Hila desde arriba"));
+      //Ahora en vez de un Text, añadimos un dropdown
+      //BuildingModel buildingModel = listaEdificios;
+
+      //listaWidget.add(DropdownCustom(building: buildingModel));
+
+      //listaEdificios = lista_temp;
+
+
   }
 
   late FacilityModel facilitySelected;
-  List<Widget> listaDropdowns = [];
 
   @override
   Widget build(BuildContext context) {
@@ -97,14 +115,12 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
                         //Asignamos siempre el primer edificio del listado.
                         facilitySelected = building.facilities[0];
 
-                        //¿Debemos guardar todos los widget y pintarlos?
-                        listaDropdowns.add(new DropdownCustom(
-                          building: building,
-                        ));
 
                         return Column(
                           //children: listaWidget
+
                           children: [
+
                             DropdownButton<FacilityModel>(
                               value: facilitySelected,
                               icon: const Icon(Icons.arrow_downward),
@@ -119,83 +135,22 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
                               }).toList(),
 
                               onChanged: (FacilityModel? newFacility){
+
+                                print("El edificio elegido es: ${newFacility!.name}");
+
+                                //Hacemos una peticion aqui
+                                listaEdificios = HttpHandler().getEntityFacility("/facility/" + newFacility.id +  "/search");
+
                                 setState(() {
-                                  print("El edificio elegido es: ${newFacility!.name}");
-                                  devolverDatos(true, newFacility.name);
+
                                 });
                               },
                             ),
 
-                            _visible? new Row(
-                              children: [
-                                TablaDos()
-                              ],
-                              /*
-                              children: <Widget> [
-                                DropdownButton<FacilityModel>(
-                                  value: facilitySelected,
-                                  icon: const Icon(Icons.arrow_downward),
-                                  iconSize: 24,
-
-                                  items: building.facilities
-                                      .map<DropdownMenuItem<FacilityModel>>(
-                                          (FacilityModel facility) {
-                                        return DropdownMenuItem<FacilityModel>(
-                                            value: facility,
-                                            child: Text(facility.name));
-                                      }).toList(),
-
-                                  onChanged: (FacilityModel? newFacility){
-                                    setState(() {
-                                      print("El edificio elegido es: ${newFacility!.name}");
-                                    });
-                                  },
-                                ),
-                              ],
-                              */
-
-                            ): new Container()
                           ],
 
 
-                          /*
-                      children:
-                      [
-                        DropdownButton<FacilityModel>(
-                          value: facilitySelected,
-                          icon: const Icon(Icons.arrow_downward),
-                          iconSize: 24,
-                          elevation: 16,
-                          style: const TextStyle(color: Colors.deepPurple),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.deepPurple,
-                          ),
 
-                          onChanged: (FacilityModel? newFacility){
-                            setState(() {
-                              facilitySelected = newFacility!;
-
-                              //Aqui tenemos que hacer otra peticion a la API, para pedir el numero de planta
-                              //¿Pero luego como lo enseñamos?
-
-                              //y si guardamos el facility en un array y luego se pinta todo?
-
-                            });
-                          },
-
-                          items: building.facilities
-                              .map<DropdownMenuItem<FacilityModel>>((FacilityModel facility) {
-                            return DropdownMenuItem<FacilityModel>(
-                                value: facility,
-                                child: Text(facility.name)
-                            );
-                          }).toList(),
-                        ),
-
-
-                      ],
-*/
                         );
                       }
 
@@ -226,138 +181,31 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
               ],
             ),
           ),
-        ));
+        ),
+
+        floatingActionButton: FloatingActionButton(
+        onPressed: () async {
+
+          //Desde aqui hacemos una peticion web
+          lista_temp = HttpHandler().getEntityFacility("/facility/" + model.facilities.last.id +  "/search");
+          model = await HttpHandler().getEntityFacility("/facility/" + model.facilities.last.id  + "/search");
+
+          setState(() {
+            listaWidget.add(DropdownCustom(building: model));
+            listaEdificios =  lista_temp;
+          });
+
+        },
+    child: Container(),
+    ),
+
+    );
   }
 }
 
-class TablaDos extends StatefulWidget {
-  @override
-  _TablaDosState createState() => _TablaDosState();
-}
-
-class _TablaDosState extends State<TablaDos> {
-
-  var listaEntidad;
-
-  @override
-  void initState() {
-    // TODO: implement initState
-    super.initState();
-   // getListaEdificios();
-    setState(() {
-
-    });
-  }
-
-
-  /*
-  Future<Null> getListaEdificios() async {
-    setState(() {
-      listaEntidad = HttpHandler().getEntities();
-    });
-  }
-   */
 
 
 
-
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-        future: listaEntidad,
-        builder: (context, snapshot) {
-          if (snapshot.hasError) {
-            return Center(
-              child:
-              Text("Ha ocurrido un error: ${snapshot.error}"),
-            );
-          } else if (snapshot.hasData) {
-            BuildingModel building = snapshot.data as BuildingModel;
-
-            //Cambiamos la opcion por defecto para que no nos pete.
-            //Asignamos siempre el primer edificio del listado.
-           // facilitySelected = building.facilities[0];
-
-            //¿Debemos guardar todos los widget y pintarlos?
-           /* listaDropdowns.add(new DropdownCustom(
-              building: building,
-            ));
-
-            */
-
-            return Column(
-              //children: listaWidget
-              children: [
-                DropdownButton<FacilityModel>(
-                 // value: facilitySelected,
-                  icon: const Icon(Icons.arrow_downward),
-                  iconSize: 24,
-
-                  items: building.facilities
-                      .map<DropdownMenuItem<FacilityModel>>(
-                          (FacilityModel facility) {
-                        return DropdownMenuItem<FacilityModel>(
-                            value: facility,
-                            child: Text(facility.name));
-                      }).toList(),
-
-                  onChanged: (FacilityModel? newFacility){
-                    setState(() {
-
-                    });
-                  },
-                ),
-              ],
-
-
-              /*
-                      children:
-                      [
-                        DropdownButton<FacilityModel>(
-                          value: facilitySelected,
-                          icon: const Icon(Icons.arrow_downward),
-                          iconSize: 24,
-                          elevation: 16,
-                          style: const TextStyle(color: Colors.deepPurple),
-                          underline: Container(
-                            height: 2,
-                            color: Colors.deepPurple,
-                          ),
-
-                          onChanged: (FacilityModel? newFacility){
-                            setState(() {
-                              facilitySelected = newFacility!;
-
-                              //Aqui tenemos que hacer otra peticion a la API, para pedir el numero de planta
-                              //¿Pero luego como lo enseñamos?
-
-                              //y si guardamos el facility en un array y luego se pinta todo?
-
-                            });
-                          },
-
-                          items: building.facilities
-                              .map<DropdownMenuItem<FacilityModel>>((FacilityModel facility) {
-                            return DropdownMenuItem<FacilityModel>(
-                                value: facility,
-                                child: Text(facility.name)
-                            );
-                          }).toList(),
-                        ),
-
-
-                      ],
-*/
-            );
-          }
-
-          return Center(
-            child: CircularProgressIndicator(),
-          );
-        })
-    ;
-  }
-}
 
 
 class DropdownCustom extends StatefulWidget {
@@ -386,15 +234,21 @@ class _DropdownCustomState extends State<DropdownCustom> {
         color: Colors.deepPurple,
       ),
       onChanged: (FacilityModel? newFacility) {
-        setState(() {
+        setState(() async {
           facilitySelected = newFacility!;
 
-          //Aqui tenemos que hacer otra peticion a la API, para pedir el numero de planta
-          //¿Pero luego como lo enseñamos?
-
           print("El siguiente elemento a llamar es ${newFacility.id}");
+          //Aqui hay que hacer listaWidget.add
 
-          //¿Tenemos que usar un manejador de estados aqui?
+          lista_temp = HttpHandler().getEntityFacility("/facility/" + facilitySelected.id +  "/search");
+          model = await HttpHandler().getEntityFacility("/facility/" + facilitySelected.id  + "/search");
+
+          setState(() {
+            listaWidget.add(DropdownCustom(building: model));
+            listaEdificios =  lista_temp;
+
+          });
+
         });
       },
       items: widget.building.facilities
@@ -406,6 +260,13 @@ class _DropdownCustomState extends State<DropdownCustom> {
   }
 }
 
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 class _FormularioReservasPuesto extends StatefulWidget {
   @override
   __FormState createState() => __FormState();

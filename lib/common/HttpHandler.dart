@@ -112,4 +112,25 @@ class HttpHandler {
     }
   }
 
+  Future<BuildingModel> getEntityFacility(String ruta) async{
+
+    //Realizamos peticion a la URL de 480
+    final response = await http.post(Uri.parse(_baseUrl + ruta));
+
+    //Comprobamos que la descarga vaya Ok
+    if(response.statusCode == 200){
+      //decodigicamos el JSON que nos mandan
+      var entityFacility = jsonDecode(response.body);
+
+      print("nos mandan");
+      print(response.body);
+
+      return BuildingModel.fromJson(entityFacility);
+
+    }else{
+      throw Exception("Fallo al conectar");
+    }
+
+  }
+
 }
