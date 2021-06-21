@@ -1,8 +1,8 @@
 import 'dart:convert';
 import 'package:facilities_v1/models/BuildingModel.dart';
-import 'package:facilities_v1/models/Edificio.dart';
 import 'package:facilities_v1/models/Entorno.dart';
 import 'package:facilities_v1/models/FacilityModel.dart';
+import 'package:facilities_v1/models/ReservaDetalle.dart';
 import 'package:facilities_v1/models/ReservaModel.dart';
 import 'package:facilities_v1/models/Usuario.dart';
 import 'package:flutter/services.dart';
@@ -86,6 +86,25 @@ class HttpHandler {
       throw Exception("Fallo al conectar");
     }
   }
+
+
+  Future<ReservaDetalle> getReservaDetalle(String id) async {
+    final response = await http.get(Uri.parse(_baseUrl + "/reservation/" + id));
+
+    if(response.statusCode == 200){
+      var reserva = jsonDecode(response.body);
+
+      ReservaDetalle temp = ReservaDetalle.fromJson(reserva);
+
+
+      return ReservaDetalle.fromJson(reserva);
+
+    } else {
+      throw Exception("Fallo al conectar");
+    }
+  }
+
+
 
   Future<BuildingModel> getFacilitiesAvailables() async {
   //Future<void> getFacilitiesAvailables() async {

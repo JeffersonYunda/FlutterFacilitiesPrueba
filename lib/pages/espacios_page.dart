@@ -148,7 +148,7 @@ class _EspaciosPageState extends State<EspaciosPage> {
                                 
                                 if(newFacility.is_selectable == false) {
 
-                                  
+
                                   listaDatos.removeAt(listaDatos.length-1);
 
 

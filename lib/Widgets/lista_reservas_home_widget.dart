@@ -20,7 +20,7 @@ class ListaReservasHome extends StatelessWidget {
           items = items + 1;
           list.add(
             GestureDetector(
-              onTap: () => {Navigator.pushNamed(context, "reserva_detalle")},
+              onTap: () => {Navigator.pushNamed(context, "reserva_detalle", arguments: reserva.id)},
               child: Container(
                 width: _screenSize.width * 0.7,
                 margin: EdgeInsets.only(top: 15),
@@ -89,7 +89,7 @@ class ListaReservasHome extends StatelessWidget {
                                       child: Padding(
                                         padding: const EdgeInsets.only(top: 6),
                                         child: Text(
-                                          reserva.costString,
+                                          reserva.costString + '€',
                                           textAlign: TextAlign.center,
                                           style: TextStyle(
                                               fontSize: 13,
