@@ -98,13 +98,6 @@ class HttpHandler {
       //Decodificamos el JSON que nso mandan
       var edificio = jsonDecode(response.body);
 
-      /*
-      BuildingModel temp = BuildingModel.fromJson(edificio);
-
-      print("Imprimiendo desde http");
-      print(temp.facility_name);
-      print(temp.facilities[0].name);
-*/
       return BuildingModel.fromJson(edificio);
 
     } else {

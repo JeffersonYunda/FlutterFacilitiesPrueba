@@ -1,12 +1,190 @@
+
+
+import 'dart:convert';
+
 import 'package:facilities_v1/common/HttpHandler.dart';
-import 'package:facilities_v1/custom_input/boton_azul.dart';
-import 'package:facilities_v1/custom_input/checkbox_days.dart';
 import 'package:facilities_v1/custom_input/custom_input.dart';
 import 'package:facilities_v1/models/BuildingModel.dart';
 import 'package:facilities_v1/models/FacilityModel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'package:http/http.dart' as http;
+
+
+class ReservarPuestoPage extends StatefulWidget {
+  @override
+  _ReservarPuestoPageState createState() => _ReservarPuestoPageState();
+}
+
+class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
+
+  var listaEdificios;
+
+  List<BuildingModel> listaDatos = <BuildingModel>[];
+
+  //late FacilityModel facilitySelected;
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getListaEdificios();
+
+
+
+    setState(() {
+
+    });
+  }
+
+
+  Future<Null> getListaEdificios() async {
+    setState(() {
+      listaEdificios = HttpHandler().getFacilitiesAvailables();
+    });
+  }
+
+
+
+  void devolverDatos(String id) {
+
+    setState(() {
+      getListaEspacios(id);
+    });
+  }
+
+
+  Future<Null> getListaEspacios(String id) async {
+    setState(() {
+      listaEdificios = getEspacios(id);
+    });
+  }
+
+
+  Future<BuildingModel> getEspacios(String id) async {
+
+    final String _baseUrl = "https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io";
+
+    final response = await http.post(Uri.parse(_baseUrl + "/facility/" + id + "/search"));
+
+    if(response.statusCode == 200){
+
+      var edificio = jsonDecode(response.body);
+
+      return BuildingModel.fromJson(edificio);
+
+    } else {
+      throw Exception("Fallo al conectar");
+    }
+  }
+
+
+
+
+
+  @override
+  Widget build(BuildContext context) {
+
+    return Scaffold(
+
+        body: SafeArea(
+          child: FutureBuilder(
+              future: listaEdificios,
+              builder: (BuildContext context, AsyncSnapshot snapshot) {
+
+                if (snapshot.hasData) {
+
+                  BuildingModel building = snapshot.data;
+
+                  //Si la lista de datos no contiene el edificio, lo metemos
+                  if(!listaDatos.contains(building)){
+                    listaDatos.add(building);
+                  }
+
+
+                  //Cambiamos la opcion por defecto para que no nos pete.
+                  //Asignamos siempre el primer edificio del listado.
+                  //   facilitySelected = building.facilities[0];
+                  return Container(
+                    child: Center(
+                      child: ListView.builder(
+                          itemCount: listaDatos.length,
+                          itemBuilder: ( _ , index) {
+
+                            late FacilityModel facilitySelected = listaDatos[index].facilities[1];
+
+
+
+                            return Column(
+                              children: [
+
+                                DropdownButton<FacilityModel>(
+                                  value: facilitySelected,
+
+                                  icon: const Icon(Icons.arrow_downward),
+                                  iconSize: 24,
+                                  isExpanded: true,
+
+                                  items: listaDatos[index].facilities
+                                      .map<DropdownMenuItem<FacilityModel>>(
+                                          (FacilityModel facility) {
+                                        return DropdownMenuItem<FacilityModel>(
+                                            value: facility,
+                                            child: Text(facility.name));
+                                      }).toList(),
+
+                                  onChanged: (FacilityModel? newFacility){
+                                    setState(() {
+
+                                      print("El edificio elegido es: ${newFacility!.name}");
+
+                                      if(newFacility.is_selectable == false) {
+
+                                        //Si nuestra lista de datos ya contiene alguna estancia elegida, debemos
+                                        //borra desde donde este hasta el final
+
+                                          facilitySelected = newFacility;
+
+                                          devolverDatos(newFacility.id);
+
+                                       // listaDatos.removeAt(listaDatos.length-1);
+                                      }
+                                    });
+                                  },
+                                ),
+                              ],
+                            );
+                          }
+                      ),
+                    ),
+                  );
+                }
+
+                if(snapshot.connectionState != ConnectionState.done){
+                  return Text("loading..");
+                }
+
+                if(snapshot.hasError){
+                  return Text("Error tiene que ser tratado");
+                }
+
+                return Center(
+                  child: CircularProgressIndicator(),
+                );
+              }
+          ),
+        )
+
+    );
+  }
+
+}
+
+
+
+
+/*
 List<Widget> listaWidget = [];
 var listaEdificios;
 var lista_temp;
@@ -20,6 +198,8 @@ class ReservarPuestoPage extends StatefulWidget {
 class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
   var listaEdificios;
   var lista_temp;
+  var i;
+  List<BuildingModel> listaDatos = <BuildingModel>[];
 
   @override
   void initState() {
@@ -31,29 +211,9 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
 
   Future<Null> getListaEdificios() async {
 
-
-    lista_temp = HttpHandler().getFacilitiesAvailables();
-    model = await HttpHandler().getFacilitiesAvailables();
-
     setState(() {
-
-      listaWidget.add(DropdownCustom(building: model));
-
-      //print("Obteniendo: ${model.facility_name}");
-
-     // print(moderl.facility_name);
-      listaEdificios =  lista_temp;
+      listaEdificios = HttpHandler().getFacilitiesAvailables();
     });
-
-
-
-      //listaWidget.add(Text("Hila desde arriba"));
-      //Ahora en vez de un Text, añadimos un dropdown
-      //BuildingModel buildingModel = listaEdificios;
-
-      //listaWidget.add(DropdownCustom(building: buildingModel));
-
-      //listaEdificios = lista_temp;
 
 
   }
@@ -92,15 +252,9 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
           ),
           preferredSize: Size.fromHeight(100),
         ),
-        body: SingleChildScrollView(
-          physics: BouncingScrollPhysics(),
-          child: Container(
-            //Si tuviesemos que cortar la altura tiramos de aqui
-            //height: MediaQuery.of(context).size.height * 0.9,
-            child: Column(
-              children: [
-                //Formulario
-                FutureBuilder(
+
+        body: SafeArea(
+              child: FutureBuilder(
                     future: listaEdificios,
                     builder: (context, snapshot) {
                       if (snapshot.hasError) {
@@ -111,47 +265,56 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
                       } else if (snapshot.hasData) {
                         BuildingModel building = snapshot.data as BuildingModel;
 
+                        listaDatos.add(building);
+
                         //Cambiamos la opcion por defecto para que no nos pete.
                         //Asignamos siempre el primer edificio del listado.
                         facilitySelected = building.facilities[0];
 
 
-                        return Column(
-                          //children: listaWidget
+                        return Container(
+                          child: Center(
+                            child: ListView.builder(
+                              itemCount: i,
+                                itemBuilder: ( _ , index){
+                                return Column(
+                                  /*
+                                  children: [
+                                    DropdownButton<FacilityModel>(
+                                      value: facilitySelected,
+                                        icon: const Icon(Icons.arrow_downward),
+                                        iconSize: 24,
 
-                          children: [
+                                        items: listaDatos[index].facilities.
+                                        map<DropdownMenuItem<FacilityModel>>(
+                                            (FacilityModel facility){
+                                              return DropdownMenuItem<FacilityModel>(
+                                                value: facility,
+                                                  child: Text(facility.name)
+                                              );
+                                            }
+                                        ).toList(),
 
-                            DropdownButton<FacilityModel>(
-                              value: facilitySelected,
-                              icon: const Icon(Icons.arrow_downward),
-                              iconSize: 24,
+                                      onChanged: (FacilityModel? newFacility){
+                                        setState(() {
+                                          print("Aqui hacemos cosas");
+                                        });
+                                      },
 
-                              items: building.facilities
-                                  .map<DropdownMenuItem<FacilityModel>>(
-                                      (FacilityModel facility) {
-                                return DropdownMenuItem<FacilityModel>(
-                                    value: facility,
-                                    child: Text(facility.name));
-                              }).toList(),
-
-                              onChanged: (FacilityModel? newFacility){
-
-                                print("El edificio elegido es: ${newFacility!.name}");
-
-                                //Hacemos una peticion aqui
-                                listaEdificios = HttpHandler().getEntityFacility("/facility/" + newFacility.id +  "/search");
-
-                                setState(() {
-
-                                });
-                              },
+                                    )
+                                  ],
+                                  */
+                                );
+                                }
                             ),
 
-                          ],
+
+                          ),
 
 
 
                         );
+
                       }
 
                       return Center(
@@ -159,29 +322,10 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
                       );
                     })
 
-                //_FormularioReservasPuesto(),
 
-                //Espacio entre el formulario y el boton
-                //Este espacio deberia calcularse de otra manera o
-                //si se usa un SizedBox la altura deberia estar expresada
-                //en tanto por ciento
-                /*
-              SizedBox(
-                height: 200,
-              ),
-*/
-                //Boton de reservar
-                /*
-              BotonAzul(
-                  text: "Reservar puesto",
-                  onPressed: (){}
-              )
 
-               */
-              ],
             ),
-          ),
-        ),
+
 
         floatingActionButton: FloatingActionButton(
         onPressed: () async {
@@ -260,6 +404,7 @@ class _DropdownCustomState extends State<DropdownCustom> {
   }
 }
 
+ */
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
