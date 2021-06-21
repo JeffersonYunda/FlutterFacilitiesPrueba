@@ -4,14 +4,14 @@ class Entorno {
   bool workspaceReservationEnabled;
   bool parkingReservationEnabled;
   bool meetingRoomReservationEnabled;
-  Theme theme;
+  Themes themes;
 
   Entorno({
     required this.icon,
     required this.workspaceReservationEnabled,
     required this.parkingReservationEnabled,
     required this.meetingRoomReservationEnabled,
-    required this.theme,
+    required this.themes,
   });
 
   factory Entorno.fromJson(Map<String, dynamic> json) => Entorno(
@@ -19,7 +19,7 @@ class Entorno {
     workspaceReservationEnabled: json["workspace_reservation_enabled"],
     parkingReservationEnabled: json["parking_reservation_enabled"],
     meetingRoomReservationEnabled: json["meeting_room_reservation_enabled"],
-    theme: Theme.fromJson(json["theme"]),
+    themes: Themes.fromJson(json["theme"]),
   );
 
   Map<String, dynamic> toJson() => {
@@ -27,23 +27,23 @@ class Entorno {
     "workspace_reservation_enabled": workspaceReservationEnabled,
     "parking_reservation_enabled": parkingReservationEnabled,
     "meeting_room_reservation_enabled": meetingRoomReservationEnabled,
-    "theme": theme.toJson(),
+    "theme": themes.toJson(),
   };
 }
 
-class Theme {
+class Themes {
 
   String accentColor;
   String primaryColor;
   String secondaryColor;
 
-  Theme({
+  Themes({
     required this.accentColor,
     required this.primaryColor,
     required this.secondaryColor,
   });
 
-  factory Theme.fromJson(Map<String, dynamic> json) => Theme(
+  factory Themes.fromJson(Map<String, dynamic> json) => Themes(
     accentColor: json["accent_color"],
     primaryColor: json["primary_color"],
     secondaryColor: json["secondary_color"],

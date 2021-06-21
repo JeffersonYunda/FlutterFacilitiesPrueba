@@ -1,0 +1,68 @@
+{
+    "reservations": [
+        {
+            "id": "RESERVA_1",
+            "type": "WORKSPACES",
+            "start_date": "2021-07-14T12:07:43.522Z",
+            "date_string": "14 de julio de 10:07 a 21:07 1",
+            "cost_string": null,
+            "is_past_reservation": false,
+            "workspace_reservation_details": {
+                "start_date": "2021-07-14T12:07:43.522Z",
+                "end_date": "2021-07-14T13:08:43.522Z",
+                "facility_id": "PUESTO_2",
+                "days_of_week": [
+                    1
+                ]
+            }
+        },
+        {
+            "id": "RESERVA_2",
+            "type": "WORKSPACES",
+            "start_date": "2021-06-14T12:07:43.522Z",
+            "date_string": "14 de julio de 12:07 a 13:07 2",
+            "cost_string": null,
+            "is_past_reservation": false,
+            "workspace_reservation_details": {
+                "start_date": "2021-07-14T12:07:43.522Z",
+                "end_date": "2021-07-14T14:07:43.522Z",
+                "facility_id": "PUESTO_2",
+                "days_of_week": [
+                    1
+                ]
+            }
+        },
+        {
+            "id": "RESERVA_3",
+            "type": "WORKSPACES",
+            "start_date": "2021-06-14T12:07:43.522Z",
+            "date_string": "19 de julio de 12:07 a 13:07 3",
+            "cost_string": null,
+            "is_past_reservation": false,
+            "workspace_reservation_details": {
+                "start_date": "2021-07-14T12:07:43.522Z",
+                "end_date": "2021-07-14T112:11:43.522Z",
+                "facility_id": "PUESTO_2",
+                "days_of_week": [
+                    1
+                ]
+            }
+        },
+        {
+            "id": "RESERVA_4",
+            "type": "WORKSPACES",
+            "start_date": "2026-06-14T12:07:43.522Z",
+            "date_string": "25 de julio de 12:07 a 13:07 4",
+            "cost_string": null,
+            "is_past_reservation": false,
+            "workspace_reservation_details": {
+                "start_date": "2021-07-14T12:07:43.522Z",
+                "end_date": "2021-07-14T13:07:43.522Z",
+                "facility_id": "PUESTO_2",
+                "days_of_week": [
+                    1
+                ]
+            }
+        }
+    ]
+}

@@ -3,13 +3,16 @@ import 'package:facilities_v1/models/BuildingModel.dart';
 import 'package:facilities_v1/models/Edificio.dart';
 import 'package:facilities_v1/models/Entorno.dart';
 import 'package:facilities_v1/models/FacilityModel.dart';
+import 'package:facilities_v1/models/ReservaModel.dart';
 import 'package:facilities_v1/models/Usuario.dart';
+import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 
 class HttpHandler {
 
   final String _baseUrl = "https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io";
+
 
   Future<Entorno> getEntorno() async {
     final response = await http.get(Uri.parse(_baseUrl + "/configuration/CUATROOCHENTA"));
@@ -28,7 +31,7 @@ class HttpHandler {
       print(temp.theme.accentColor);
       print(temp.theme.primaryColor);
       print(temp.theme.secondaryColor);
-       */
+      */
 
       return Entorno.fromJson(entorno);
 
@@ -53,6 +56,31 @@ class HttpHandler {
        */
 
       return Usuario.fromJson(usuario);
+
+    } else {
+      throw Exception("Fallo al conectar");
+    }
+  }
+
+  Future<ReservaModel> getReserva() async {
+   // final response = await http.post(Uri.parse(_baseUrl + "/reservations/search"));
+   final response = await http.post(Uri.parse(_baseUrl + "/reservations/search"));
+
+
+    if(response.statusCode == 200){
+      var datos = jsonDecode(response.body);
+
+      ReservaModel temp = ReservaModel.fromJson(datos);
+
+
+      print("Imprimiendo desde getReserva");
+      print(temp.reservations[0].dateString);
+
+
+      //List listaDatos = datos['reservations'];
+      //return listaDatos.map((dato) => ReservaModel.fromJson(dato)).toList();
+
+      return ReservaModel.fromJson(datos);
 
     } else {
       throw Exception("Fallo al conectar");

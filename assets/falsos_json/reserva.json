@@ -1,0 +1,25 @@
+{
+    "id": "RESERVA_1",
+    "type": "WORKSPACES",
+    "start_date": "2021-07-14T12:07:43.522Z",
+    "date_string": "14 de julio de 12:07 a 13:07",
+    "cost_string": null,
+    "is_past_reservation": false,
+    "facility": {
+        "id": "PUESTO_2",
+        "name": "Puesto 2",
+        "image": null,
+        "is_selectable": true,
+        "coordinates": null,
+        "forge_url": null,
+        "children_name": null
+    },
+    "workspace_reservation_details": {
+      "start_date": "2021-07-14T12:07:43.522Z",
+      "end_date": "2021-07-14T13:07:43.522Z",
+      "facility_id": "PUESTO_2",
+      "days_of_week": [
+          1
+      ]
+    }
+  }

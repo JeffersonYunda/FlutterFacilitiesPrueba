@@ -1,0 +1,12 @@
+{
+    "base_url": "https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io",
+    "icon": "https://www.480interactive.com/wp-content/themes/interactive/images/480interactive-logo2018.png",
+    "workspace_reservation_enabled": true,
+    "parking_reservation_enabled": true,
+    "meeting_room_reservation_enabled": true,
+    "theme": {
+      "accent_color": "#64ECAB",
+      "primary_color": "#242833",
+      "secondary_color": "#F5F5F5"
+    }
+}
