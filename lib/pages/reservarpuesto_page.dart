@@ -1,8 +1,8 @@
-
-
 import 'dart:convert';
 
+import 'package:facilities_v1/Widgets/caja_fecha_reservas_widget.dart';
 import 'package:facilities_v1/common/HttpHandler.dart';
+import 'package:facilities_v1/custom_input/checkbox_days.dart';
 import 'package:facilities_v1/custom_input/custom_input.dart';
 import 'package:facilities_v1/models/BuildingModel.dart';
 import 'package:facilities_v1/models/FacilityModel.dart';
@@ -11,19 +11,44 @@ import 'package:flutter/material.dart';
 
 import 'package:http/http.dart' as http;
 
-
 class ReservarPuestoPage extends StatefulWidget {
   @override
   _ReservarPuestoPageState createState() => _ReservarPuestoPageState();
 }
 
 class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
-
   var listaEdificios;
+  final emailCtrl = TextEditingController();
+  final startDateController = TextEditingController();
+  final endDateController = TextEditingController();
+  bool checkBoxLunes = false;
+  bool checkBoxMartes = false;
+  bool checkBoxMiercoles = false;
+  bool checkBoxJueves = false;
+  bool checkBoxViernes = false;
+  bool checkBoxSabado = false;
+  bool checkBoxDomingo = false;
+  late FacilityModel edificio;
 
-  List<BuildingModel> listaDatos = <BuildingModel>[];
+  DateTime startDate = DateTime.now();
 
-  //late FacilityModel facilitySelected;
+  Future<Null> selectTimePicker(
+      BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+        context: context,
+        initialDate: startDate,
+        firstDate: DateTime(1940),
+        lastDate: DateTime(2030));
+
+    if (picked != null && picked != startDate) {
+      setState(() {
+        startDate = picked;
+        controller.text =
+            "${startDate.day.toString()}.${startDate.month.toString()}.${startDate.year.toString()}";
+        print(startDate.toString());
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -31,13 +56,8 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
     super.initState();
     getListaEdificios();
 
-
-
-    setState(() {
-
-    });
+    setState(() {});
   }
-
 
   Future<Null> getListaEdificios() async {
     setState(() {
@@ -45,144 +65,759 @@ class _ReservarPuestoPageState extends State<ReservarPuestoPage> {
     });
   }
 
-
-
-  void devolverDatos(String id) {
-
-    setState(() {
-      getListaEspacios(id);
-    });
-  }
-
-
-  Future<Null> getListaEspacios(String id) async {
-    setState(() {
-      listaEdificios = getEspacios(id);
-    });
-  }
-
-
-  Future<BuildingModel> getEspacios(String id) async {
-
-    final String _baseUrl = "https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io";
-
-    final response = await http.post(Uri.parse(_baseUrl + "/facility/" + id + "/search"));
-
-    if(response.statusCode == 200){
-
-      var edificio = jsonDecode(response.body);
-
-      return BuildingModel.fromJson(edificio);
-
-    } else {
-      throw Exception("Fallo al conectar");
-    }
-  }
-
-
-
-
-
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
+      //AppBar
+      appBar: PreferredSize(
+        preferredSize: Size.fromHeight(100),
+        child: SafeArea(
+          child: Container(
+            //color: Colors.red,
+            child: Padding(
+              padding: const EdgeInsets.only(top: 44),
+              child: Row(
+                children: [
+                  //Icono de 'Equis'
+                  GestureDetector(
+                    onTap: () {
+                      print("Cerrando");
+                    },
+                    child: Icon(
+                      Icons.clear,
+                      size: 25,
+                      color: Colors.black54,
+                    ),
+                  ),
 
-        body: SafeArea(
-          child: FutureBuilder(
-              future: listaEdificios,
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
+                  //Separacion entre el icono y el titulo de la pagina
+                  SizedBox(
+                    width: 40,
+                  ),
 
-                if (snapshot.hasData) {
+                  //Titulo de la pagina
+                  Padding(
+                    padding: const EdgeInsets.only(top: 0),
+                    child: Text(
+                      'Reservar puesto',
+                      style: TextStyle(
+                          fontSize: 20.0,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+      ),
 
-                  BuildingModel building = snapshot.data;
+      //Cuerpo de las reservas
+      body: Container(
+        child: Column(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              //Usamos columnas anidadas para situar el boton de reservar
+              //en la parte inferior de la pantalla sin problema
 
-                  //Si la lista de datos no contiene el edificio, lo metemos
-                  if(!listaDatos.contains(building)){
-                    listaDatos.add(building);
-                  }
+              //Formulario de las reservas
+              Column(
+                children: [
+                  //Espacio entre titulo y campos de fecha
+                  SizedBox(
+                    height: 12,
+                  ),
 
+                  //Fila de fechas
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      CajaReservaFechaWidget(
+                        dateController: startDateController,
+                        placeHolder: "DD/MM/AAAA",
+                        icon: Icons.calendar_today_outlined,
+                        title: "Día inicio",
+                      ),
+                      CajaReservaFechaWidget(
+                        dateController: endDateController,
+                        placeHolder: "DD/MM/AAAA",
+                        icon: Icons.calendar_today_outlined,
+                        title: "Día fin",
+                      ),
+                    ],
+                  ),
 
-                  //Cambiamos la opcion por defecto para que no nos pete.
-                  //Asignamos siempre el primer edificio del listado.
-                  //   facilitySelected = building.facilities[0];
-                  return Container(
-                    child: Center(
-                      child: ListView.builder(
-                          itemCount: listaDatos.length,
-                          itemBuilder: ( _ , index) {
+                  //Espacio entre fechas y siguiente nivel
+                  SizedBox(
+                    height: 24,
+                  ),
 
-                            late FacilityModel facilitySelected = listaDatos[index].facilities[1];
+                  FutureBuilder(
+                      future: listaEdificios,
+                      builder: (BuildContext context, AsyncSnapshot snapshot) {
+                        if (snapshot.hasError) {
+                          return Center(
+                            child:
+                                Text("Ha ocurrido un error: ${snapshot.error}"),
+                          );
+                        } else if (snapshot.hasData) {
+                          BuildingModel building =
+                              snapshot.data as BuildingModel;
+                          FacilityModel facilitySelected =
+                              building.facilities[0];
 
-
-
-                            return Column(
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(horizontal: 10),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-
-                                DropdownButton<FacilityModel>(
-                                  value: facilitySelected,
-
-                                  icon: const Icon(Icons.arrow_downward),
-                                  iconSize: 24,
-                                  isExpanded: true,
-
-                                  items: listaDatos[index].facilities
-                                      .map<DropdownMenuItem<FacilityModel>>(
-                                          (FacilityModel facility) {
-                                        return DropdownMenuItem<FacilityModel>(
-                                            value: facility,
-                                            child: Text(facility.name));
-                                      }).toList(),
-
-                                  onChanged: (FacilityModel? newFacility){
-                                    setState(() {
-
-                                      print("El edificio elegido es: ${newFacility!.name}");
-
-                                      if(newFacility.is_selectable == false) {
-
-                                        //Si nuestra lista de datos ya contiene alguna estancia elegida, debemos
-                                        //borra desde donde este hasta el final
-
-                                          facilitySelected = newFacility;
-
-                                          devolverDatos(newFacility.id);
-
-                                       // listaDatos.removeAt(listaDatos.length-1);
-                                      }
-                                    });
-                                  },
+                                Container(
+                                  child: Text(
+                                    "Puesto",
+                                    style: TextStyle(
+                                        letterSpacing: 0.5, color: Colors.grey),
+                                  ),
                                 ),
+                                Container(
+                                  decoration: BoxDecoration(
+                                      color: Colors.white,
+                                      boxShadow: <BoxShadow>[
+                                        BoxShadow(
+                                            color:
+                                                Colors.black.withOpacity(0.05),
+                                            offset: Offset(0, 3))
+                                      ]),
+                                  child: DropdownButtonHideUnderline(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: DropdownButton<FacilityModel>(
+                                        //value: facilitySelected,
+                                        hint: Text("Seleccione opción"),
+                                        icon: const Icon(
+                                          Icons.arrow_right_outlined,
+                                          color: Colors.black38,
+                                        ),
+                                        iconSize: 24,
+                                        isExpanded: true,
+                                        style: TextStyle(
+                                            fontSize: 18,
+                                            color: Colors.black,
+                                            fontWeight: FontWeight.bold),
+
+                                        onChanged: (FacilityModel? newValue) {
+                                          setState(() {
+                                            facilitySelected = newValue!;
+                                          });
+                                        },
+
+                                        items: building.facilities.map<
+                                                DropdownMenuItem<
+                                                    FacilityModel>>(
+                                            (FacilityModel value) {
+                                          return DropdownMenuItem<
+                                              FacilityModel>(
+                                            value: value,
+                                            child: Text(value.name),
+                                          );
+                                        }).toList(),
+                                      ),
+                                    ),
+                                  ),
+
+                                  /*
+                                  *  children: [
+                                    DropdownButton<FacilityModel>(
+                                      value: facilitySelected,
+                                        icon: const Icon(Icons.arrow_downward),
+                                        iconSize: 24,
+
+                                        items: listaDatos[index].facilities.
+                                        map<DropdownMenuItem<FacilityModel>>(
+                                            (FacilityModel facility){
+                                              return DropdownMenuItem<FacilityModel>(
+                                                value: facility,
+                                                  child: Text(facility.name)
+                                              );
+                                            }
+                                        ).toList(),
+
+                                      onChanged: (FacilityModel? newFacility){
+                                        setState(() {
+                                          print("Aqui hacemos cosas");
+                                        });
+                                      },
+
+                                    )
+                                  ],
+                                  *
+                                  * */
+                                )
                               ],
-                            );
+                            ),
+                          );
+                        }
+
+                        return Center(
+                          child: CircularProgressIndicator(),
+                        );
+                      }),
+
+                  //Espacio entre nivel anterior y dias de la semana
+                  SizedBox(
+                    height: 24,
+                  ),
+
+                  //Fila para dias de la semana
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      //Checkbox para el lunes
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            checkBoxLunes = !checkBoxLunes;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          decoration: BoxDecoration(
+                              color: checkBoxLunes
+                                  ? Theme.of(context).accentColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: checkBoxLunes
+                                  ? null
+                                  : Border.all(
+                                      color: Theme.of(context).accentColor,
+                                      width: 2.0)),
+                          width: 32,
+                          height: 32,
+                          child: checkBoxLunes
+                              ? Center(
+                                  child: Text(
+                                    "Lu",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    "Lu",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      //Checkbox para el martes
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            checkBoxMartes = !checkBoxMartes;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          decoration: BoxDecoration(
+                              color: checkBoxMartes
+                                  ? Theme.of(context).accentColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: checkBoxMartes
+                                  ? null
+                                  : Border.all(
+                                      color: Theme.of(context).accentColor,
+                                      width: 2.0)),
+                          width: 32,
+                          height: 32,
+                          child: checkBoxMartes
+                              ? Center(
+                                  child: Text(
+                                    "Ma",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    "Ma",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      //Checkbox para el miercoles
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            checkBoxMiercoles = !checkBoxMiercoles;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          decoration: BoxDecoration(
+                              color: checkBoxMiercoles
+                                  ? Theme.of(context).accentColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: checkBoxMiercoles
+                                  ? null
+                                  : Border.all(
+                                      color: Theme.of(context).accentColor,
+                                      width: 2.0)),
+                          width: 32,
+                          height: 32,
+                          child: checkBoxMiercoles
+                              ? Center(
+                                  child: Text(
+                                    "Mi",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    "Mi",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      //Checkbox para el jueves
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            checkBoxJueves = !checkBoxJueves;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          decoration: BoxDecoration(
+                              color: checkBoxJueves
+                                  ? Theme.of(context).accentColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: checkBoxJueves
+                                  ? null
+                                  : Border.all(
+                                      color: Theme.of(context).accentColor,
+                                      width: 2.0)),
+                          width: 32,
+                          height: 32,
+                          child: checkBoxJueves
+                              ? Center(
+                                  child: Text(
+                                    "Ju",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    "Ju",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      //Checkbox para el viernes
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            checkBoxViernes = !checkBoxViernes;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          decoration: BoxDecoration(
+                              color: checkBoxViernes
+                                  ? Theme.of(context).accentColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: checkBoxViernes
+                                  ? null
+                                  : Border.all(
+                                      color: Theme.of(context).accentColor,
+                                      width: 2.0)),
+                          width: 32,
+                          height: 32,
+                          child: checkBoxViernes
+                              ? Center(
+                                  child: Text(
+                                    "Vi",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    "Vi",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      //Checkbox para el sabado
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            checkBoxSabado = !checkBoxSabado;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          decoration: BoxDecoration(
+                              color: checkBoxSabado
+                                  ? Theme.of(context).accentColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: checkBoxSabado
+                                  ? null
+                                  : Border.all(
+                                      color: Theme.of(context).accentColor,
+                                      width: 2.0)),
+                          width: 32,
+                          height: 32,
+                          child: checkBoxSabado
+                              ? Center(
+                                  child: Text(
+                                    "Sa",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    "Sa",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      //Checkbox para el domingo
+                      GestureDetector(
+                        onTap: () {
+                          setState(() {
+                            checkBoxDomingo = !checkBoxDomingo;
+                          });
+                        },
+                        child: AnimatedContainer(
+                          duration: Duration(milliseconds: 200),
+                          curve: Curves.fastLinearToSlowEaseIn,
+                          decoration: BoxDecoration(
+                              color: checkBoxDomingo
+                                  ? Theme.of(context).accentColor
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(10.0),
+                              border: checkBoxDomingo
+                                  ? null
+                                  : Border.all(
+                                      color: Theme.of(context).accentColor,
+                                      width: 2.0)),
+                          width: 32,
+                          height: 32,
+                          child: checkBoxDomingo
+                              ? Center(
+                                  child: Text(
+                                    "Do",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                )
+                              : Center(
+                                  child: Text(
+                                    "Do",
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.black54),
+                                  ),
+                                ),
+                        ),
+                      ),
+
+                      /*
+                  checkBoxLunes = CheckboxDay(
+                    isChecked: true,
+                    size: 32,
+                    iconSize: 32,
+                    disabled: false,
+                    text: "Lu",
+                  ),
+
+                  checkBoxMartes = CheckboxDay(
+                    isChecked: true,
+                    size: 32,
+                    iconSize: 32,
+                    disabled: false,
+                    text: "Ma",
+                  ),
+
+                  checkBoxMiercoles = CheckboxDay(
+                    isChecked: true,
+                    size: 32,
+                    iconSize: 32,
+                    disabled: false,
+                    text: "Mi",
+                  ),
+
+                  checkBoxJueves = CheckboxDay(
+                    isChecked: true,
+                    size: 32,
+                    iconSize: 32,
+                    disabled: false,
+                    text: "Ju",
+                  ),
+
+                  checkBoxViernes = CheckboxDay(
+                    isChecked: true,
+                    size: 32,
+                    iconSize: 32,
+                    disabled: false,
+                    text: "Vi",
+                  ),
+
+                  checkBoxSabado = CheckboxDay(
+                    isChecked: true,
+                    size: 32,
+                    iconSize: 32,
+                    disabled: false,
+                    text: "Sa",
+                  ),
+
+                  checkBoxDomingo = CheckboxDay(
+                    isChecked: true,
+                    size: 32,
+                    iconSize: 32,
+                    disabled: true,
+                    text: "Do",
+                  )
+                   */
+                    ],
+                  ),
+                ],
+              ),
+
+              //Boton de reservar puesto
+              GestureDetector(
+                onTap: () {
+                  var json_respuesta;
+                  //Hacemos peticion
+                  HttpHandler().crearReserva(startDateController.text, endDateController.text ).then((respuesta) => {
+                        //Si obtenemos un codigo 200, enseñamos que todo ha ido guay
+                        if (respuesta["status_code"] == 200)
+                          {
+                            //Abrimos cuadro de dialogo de reserva hecha correctamente
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Center(
+                                        child: Text(
+                                          "Reserva Realizada",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      content: Text(
+                                        'La reserva ha sido realizada con exito. Puedes acceder al detalle de tu reserva desde el listado de reservas',
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      actions: [
+                                        Center(
+                                          child: TextButton(
+                                            onPressed: () {
+                                              Navigator.of(context).pop('ok');
+                                            },
+                                            child: Text(
+                                              'OK',
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold,
+                                                  color: Colors.black),
+                                            ),
+                                          ),
+                                        )
+                                      ],
+                                    )).then((result) => {print(result)}),
                           }
+                        //Si obtenemos un codigo 409, enseñamos que ha habido conflicto y
+                        //se da la posibilidad de elegir un sitio aleatorio
+                        else if (respuesta["status_code"] == 409)
+                          {
+                            //Abrimos cuadro de dialogo de reserva pendiente
+
+                            showDialog(
+                                context: context,
+                                builder: (context) => AlertDialog(
+                                      title: Center(
+                                        child: Text(
+                                          "Reserva pendiente",
+                                          style: TextStyle(
+                                              fontWeight: FontWeight.bold),
+                                        ),
+                                      ),
+                                      content: Text(
+                                        respuesta["message"],
+                                        textAlign: TextAlign.center,
+                                      ),
+                                      actions: [
+                                        Row(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.center,
+                                          mainAxisAlignment:
+                                              MainAxisAlignment.spaceEvenly,
+                                          children: [
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop('Cancelar');
+                                              },
+                                              child: Text(
+                                                'Cancelar',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                            TextButton(
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop('OK');
+                                              },
+                                              child: Text(
+                                                'Aceptar',
+                                                style: TextStyle(
+                                                    fontWeight: FontWeight.bold,
+                                                    color: Colors.black),
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    )).then((result) => {
+                                      if(result == "OK"){
+                                        HttpHandler().crearReservaAleatoria().then((value) => {
+                                          showDialog(
+                                              context: context,
+                                              builder: (context) => AlertDialog(
+                                                title: Center(
+                                                  child: Text(
+                                                    "Reserva Realizada",
+                                                    style: TextStyle(
+                                                        fontWeight: FontWeight.bold),
+                                                  ),
+                                                ),
+                                                content: Text(
+                                                  'La reserva ha sido realizada con exito. Puedes acceder al detalle de tu reserva desde el listado de reservas',
+                                                  textAlign: TextAlign.center,
+                                                ),
+                                                actions: [
+                                                  Center(
+                                                    child: TextButton(
+                                                      onPressed: () {
+                                                        Navigator.of(context).pop('ok');
+                                                      },
+                                                      child: Text(
+                                                        'OK',
+                                                        style: TextStyle(
+                                                            fontWeight: FontWeight.bold,
+                                                            color: Colors.black),
+                                                      ),
+                                                    ),
+                                                  )
+                                                ],
+                                              )).then((result) => {print(result)}),
+                                        })
+                                      }
+                                    }),
+                          }
+                      });
+                },
+                child: Center(
+                  child: Container(
+                    width: MediaQuery.of(context).size.width * 0.75,
+                    height: 65,
+                    child: Card(
+                      color: Theme.of(context).accentColor,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      child: Center(
+                        child: Text(
+                          'Reservar puesto',
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                              fontSize: 16,
+                              color: Colors.grey[700],
+                              fontWeight: FontWeight.bold),
+                        ),
                       ),
                     ),
-                  );
-                }
-
-                if(snapshot.connectionState != ConnectionState.done){
-                  return Text("loading..");
-                }
-
-                if(snapshot.hasError){
-                  return Text("Error tiene que ser tratado");
-                }
-
-                return Center(
-                  child: CircularProgressIndicator(),
-                );
-              }
-          ),
-        )
-
+                  ),
+                ),
+              )
+            ]),
+      ),
     );
   }
-
 }
-
-
-
 
 /*
 List<Widget> listaWidget = [];

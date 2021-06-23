@@ -51,7 +51,7 @@ class CustomInput extends StatelessWidget {
           ),
 
           child: TextField(
-            style: TextStyle(fontSize: 18, color: Colors.black38, fontWeight: FontWeight.bold),
+            style: TextStyle(fontSize: 18, color: Colors.black, fontWeight: FontWeight.bold),
             controller: this.textController,
             autocorrect: false,
             keyboardType: this.keyboardType,

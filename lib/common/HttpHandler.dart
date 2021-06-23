@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:facilities_v1/models/BuildingModel.dart';
 import 'package:facilities_v1/models/Entorno.dart';
 import 'package:facilities_v1/models/FacilityModel.dart';
@@ -123,6 +124,94 @@ class HttpHandler {
       throw Exception("Fallo al conectar");
     }
   }
+  
+  //Future<void> crearReserva() async{
+  Future<Map<String, dynamic>> crearReserva(String start_date, String end_date) async{
+
+    //Montamos el body con los argumentos para hacer la reserva
+    print("Las fechas son:");
+    print(start_date);
+    print(end_date);
+
+    Map<String, dynamic> lista =
+    {
+    "start_date": "2021-07-14",
+      "end_date": "2021-07-14",
+      "facility_path" : ["EDIFICIO_ESPAITEC_2", "EDIFICIO_ESPAITEC_2_PLANTA_4", "DEVELOPIA"],
+      "facility_id": "PUESTO_2",
+      "use_random_facility": false,
+      "days_of_week": [1, 2, 3]
+  };
+
+    String jsonTutorial = jsonEncode(lista);
+
+    final response = await http.post(
+        Uri.parse(_baseUrl + "/reservation/workspaces"),
+        body: jsonTutorial,
+    );
+
+    //Si recibimos 200, tenemos una respuesta normal
+    if(response.statusCode == 200){
+
+      //Creamos respuesta indicado que la reserva se ha efectuado
+      Map<String, dynamic> respuesta =
+      {
+        "status_code" : response.statusCode,
+        "message": "---"
+      };
+      return respuesta;
+    }
+
+    //Si recibimos 409, tenemos un conflicto en la reserva
+    if(response.statusCode == 409){
+      //decodificamos el json que nos mandan
+      var respuesta_server = jsonDecode(response.body);
+
+      //Creamos respuesta indicado que ha habido un conflicto
+      Map<String, dynamic> respuesta =
+      {
+        "status_code" : response.statusCode,
+        "message": respuesta_server["message"]
+      };
+
+      return respuesta;
+    }
+    throw Exception("Error");
+
+  }
+
+  //En principio esta llamada se puede hacer como crearReserva, pero de momento
+  //la dejaremos en una llamada aparte, ya que damos por hecho que siempre ira bien
+  //Future<Map<String, dynamic>> crearReservaAleatoria() async{
+  Future<void> crearReservaAleatoria() async{
+
+    //Montamos el body con los argumentos para hacer la reserva
+
+    Map<String, dynamic> lista =
+    {
+      "start_date": "2021-07-14",
+      "end_date": "2021-07-14",
+      "facility_path" : ["EDIFICIO_ESPAITEC_2", "EDIFICIO_ESPAITEC_2_PLANTA_4", "DEVELOPIA"],
+      "facility_id": "PUESTO_2",
+      "use_random_facility": true,
+      "days_of_week": [1, 2, 3]
+    };
+
+    String jsonTutorial = jsonEncode(lista);
+
+    final response = await http.post(
+      Uri.parse(_baseUrl + "/reservation/workspaces"),
+      body: jsonTutorial,
+    );
+
+    //Si recibimos 200, tenemos una respuesta normal
+    if(response.statusCode == 200){
+      print("Todo OK");
+    }
+
+
+  }
+
 
   Future<BuildingModel> getEntityFacility(String ruta) async{
 
