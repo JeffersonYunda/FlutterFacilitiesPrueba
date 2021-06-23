@@ -49,7 +49,7 @@ class Facility {
   String name;
   String image;
   bool isSelectable;
-  String coordinates;
+  String address;
   dynamic forgeUrl;
   String childrenName;
 
@@ -58,7 +58,7 @@ class Facility {
     required this.name,
     required this.image,
     required this.isSelectable,
-    required this.coordinates,
+    required this.address,
     required this.forgeUrl,
     required this.childrenName,
   });
@@ -68,7 +68,7 @@ class Facility {
     name: json["name"],
     image: json["image"] == null ? "null" : json["image"],
     isSelectable: json["is_selectable"],
-    coordinates: json["coordinates"] == null ? "null" : json["coordinates"],
+    address: json["address"] == null ? "null" : json["address"],
     forgeUrl: json["forge_url"] == null ? "null" : json["forge_url"],
     childrenName: json["children_name"] == null ? "null" : json["children_name"],
   );
@@ -78,7 +78,7 @@ class Facility {
     "name": name,
     "image": image,
     "is_selectable": isSelectable,
-    "coordinates": coordinates,
+    "address": address,
     "forge_url": forgeUrl,
     "children_name": childrenName,
   };

@@ -55,26 +55,16 @@ class _CuentaAtrasState extends State<CuentaAtras> {
   @override
   Widget build(BuildContext context) {
     final _screenSize = MediaQuery.of(context).size;
-    
 
-   
-     print('Esto es una prueba: ' + " - " + completado.toString());
-
-
-    
     Widget reserva(BuildContext context) {
       List<int> segundosOrden = <int>[];
       bool indicador = false;
-     
-
       for(Reservation reserva in widget.reservations ) {
         if(reserva.isPastReservation == false) {
          segundosOrden.add(fechaSegundosDos(reserva.workspaceReservationDetails.startDate, reserva.workspaceReservationDetails.endDate));
         }
       }
-
       segundosOrden.sort();
-      
       for(Reservation reserva in widget.reservations ) {
         if(reserva.isPastReservation == false) {
           indicador = true;
@@ -243,7 +233,7 @@ class _CuentaAtrasState extends State<CuentaAtras> {
       }
       return Container();
     }
-    
+
     return  reserva(context);
   }
 }

@@ -10,6 +10,8 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 
 
+
+
 class HttpHandler {
 
   final String _baseUrl = "https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io";
@@ -23,16 +25,16 @@ class HttpHandler {
 
       Entorno temp = Entorno.fromJson(entorno);
 
-      /*
-      print("Imprimiendo desde http");
+      
+      print("ENTORNOOOOO");
       print(temp.icon);
       print(temp.workspaceReservationEnabled);
       print(temp.parkingReservationEnabled);
       print(temp.meetingRoomReservationEnabled);
-      print(temp.theme.accentColor);
-      print(temp.theme.primaryColor);
-      print(temp.theme.secondaryColor);
-      */
+      print(temp.themes.accentColor);
+      print(temp.themes.primaryColor);
+      print(temp.themes.secondaryColor);
+      
 
       return Entorno.fromJson(entorno);
 
@@ -49,12 +51,12 @@ class HttpHandler {
 
       Usuario temp = Usuario.fromJson(usuario);
 
-      /*
-      print("Imprimiendo desde http");
+      
+      print("USUARIOOOOOOO");
       print(temp.avatar);
       print(temp.name);
       print(temp.lastName);
-       */
+       
 
       return Usuario.fromJson(usuario);
 
@@ -74,8 +76,9 @@ class HttpHandler {
       ReservaModel temp = ReservaModel.fromJson(datos);
 
 
-      print("Imprimiendo desde getReserva");
+      print("RESERVAAAAAA");
       print(temp.reservations[0].dateString);
+      print(temp.reservations[0].name);
 
 
       //List listaDatos = datos['reservations'];
@@ -90,12 +93,16 @@ class HttpHandler {
 
 
   Future<ReservaDetalle> getReservaDetalle(String id) async {
+
     final response = await http.get(Uri.parse(_baseUrl + "/reservation/" + id));
 
     if(response.statusCode == 200){
       var reserva = jsonDecode(response.body);
 
       ReservaDetalle temp = ReservaDetalle.fromJson(reserva);
+
+      print("DETALEE RESERVAAAA");
+      print(temp.facility.name);
 
 
       return ReservaDetalle.fromJson(reserva);
@@ -211,6 +218,77 @@ class HttpHandler {
 
 
   }
+
+
+
+
+
+  void pruebaLogin(usuario, pass) async {
+
+    try{
+      var url = 'https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io/login';
+
+      Map jsonBody = {"username": "prueba55", "password": "123"};
+
+      var response = await http.post(Uri.parse(url),
+          headers: {
+            "Authorization": "Bearer JWT_TOKEN",
+            "APP_PLATFORM": "android",
+            "APP_VERSION": "1.0",
+            "APP_PACKAGE": "com.480.facilityreservation",
+            "DEVICE_LANGUAGE": "es",
+            "Content-Type": "application/json",
+          },
+          body: jsonEncode(jsonBody)
+
+      ).then((response) {
+        print(response.statusCode);
+      });
+
+
+
+
+    } on Error catch(e) {
+      print('Http error');
+    }
+
+  }
+
+
+
+
+  Future<void> getToken() async {
+    String url = 'https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io/login';
+    Map<String, String> headers = {
+
+      "APP_PLATFORM": "android",
+      "APP_VERSION": "1.0",
+      "APP_PACKAGE": "com.480.facilityreservation",
+      "DEVICE_LENGUAGE": "es",
+      "Content-Type": "application/json",
+
+    };
+
+    var body = jsonEncode({
+      "username": 'prueba22',
+      "password": '123'
+    });
+
+
+    http.Response response = await http.post(Uri.parse(url), headers: headers, body: body);
+
+    int statusCode = response.statusCode;
+    print('statuscode: $statusCode');
+    final responseJson = json.decode(response.body);
+    print(responseJson);
+
+    //print('This is the API response: $responseJson');
+  }
+
+
+
+
+
 
 
   Future<BuildingModel> getEntityFacility(String ruta) async{

@@ -1,4 +1,7 @@
-import 'package:facilities_v1/pages/reservas/reservas_contenedor_page.dart';
+import 'package:facilities_v1/models/ReservaModel.dart';
+import 'package:facilities_v1/pages/reservas/reservas_actuales_page.dart';
+import 'package:facilities_v1/pages/reservas/reservas_historico_page.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 
 class ReservasPage extends StatefulWidget {
@@ -26,12 +29,17 @@ class _ReservasPageState extends State<ReservasPage> with SingleTickerProviderSt
 
   @override
   Widget build(BuildContext context) {
+
+    final List<Reservation> argumento = ModalRoute.of(context)!.settings.arguments as List<Reservation>;
+    
     return Scaffold(
       appBar: AppBar(
         // Icono retroceder
         leading:  IconButton(
           icon: Icon(Icons.arrow_back, color: Colors.black, size: 30),
-          onPressed: (){},
+          onPressed: (){
+            Navigator.of(context).pop();
+          },
         ),
         elevation: 0,
         title: Text('Mis reservas'),
@@ -54,15 +62,15 @@ class _ReservasPageState extends State<ReservasPage> with SingleTickerProviderSt
         bottom: getTabBar()
       ),
       body: getTabBarView(<Widget> [
-        DisplayWidget('Actuales'),
-        DisplayWidget('Historial')
+        ReservasActuales(reservas: argumento),
+        ReservasHistorico(reservas: argumento)
       ]
         
       )
     );
   }
 
-  TabBar getTabBar() {
+  TabBar getTabBar() {  
     
     return TabBar(
       isScrollable: false,
@@ -82,8 +90,12 @@ class _ReservasPageState extends State<ReservasPage> with SingleTickerProviderSt
 
   TabBarView getTabBarView(var displays) {
     return TabBarView(
+     // physics: NeverScrollableScrollPhysics(),
+      dragStartBehavior: DragStartBehavior.down,
       children: displays,
       controller: _controller,
     );
   }
 }
+
+

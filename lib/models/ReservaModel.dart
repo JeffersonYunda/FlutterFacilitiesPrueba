@@ -24,6 +24,7 @@ class Reservation {
         required this.dateString,
         required this.costString,
         required this.isPastReservation,
+        required this.name,
         required this.workspaceReservationDetails,
     });
 
@@ -34,6 +35,7 @@ class Reservation {
     String dateString;
     dynamic costString;
     bool isPastReservation;
+    String name;
     WorkspaceReservationDetails workspaceReservationDetails;
 
     factory Reservation.fromJson(Map<String, dynamic> json) => Reservation(
@@ -44,6 +46,7 @@ class Reservation {
         dateString: json["date_string"],
         costString: json["cost_string"] == null ? "null" : json["cost_string"],
         isPastReservation: json["is_past_reservation"],
+        name: json["name"],
         workspaceReservationDetails: WorkspaceReservationDetails.fromJson(json["workspace_reservation_details"]),
     );
 
@@ -55,6 +58,7 @@ class Reservation {
         "date_string": dateString,
         "cost_string": costString,
         "is_past_reservation": isPastReservation,
+        "name": name,
         "workspace_reservation_details": workspaceReservationDetails.toJson(),
     };
 }

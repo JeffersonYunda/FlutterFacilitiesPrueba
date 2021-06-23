@@ -20,15 +20,14 @@ class _ReservaDetallePageState extends State<ReservaDetallePage> {
     final String argumento = ModalRoute.of(context)!.settings.arguments as String;
 
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SafeArea(
-          child: FutureBuilder(
-            future: httpHandler.getReservaDetalle(argumento),
-            builder: (BuildContext context, AsyncSnapshot snapshot) {
-              if(snapshot.hasData) {
-                ReservaDetalle datos = snapshot.data;
-
-                return Column(
+      body: SafeArea(
+        child: FutureBuilder(
+          future: httpHandler.getReservaDetalle(argumento),
+          builder: (BuildContext context, AsyncSnapshot snapshot) {
+            if(snapshot.hasData) {
+              ReservaDetalle datos = snapshot.data;
+              return SingleChildScrollView(
+                child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: <Widget> [
                     Stack(
@@ -58,7 +57,7 @@ class _ReservaDetallePageState extends State<ReservaDetallePage> {
                           _nombre(datos.facility.name),
                           SizedBox(height: 13),
                           // ubicación
-                          _direccion(datos.facility.coordinates),
+                          _direccion(datos.facility.address),
                           SizedBox(height: 52),
                           Row(
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -87,12 +86,12 @@ class _ReservaDetallePageState extends State<ReservaDetallePage> {
                       ),
                     )
                   ],
-                );
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
-          ),
+                ),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator(color: Theme.of(context).accentColor));
+            }
+          },
         ),
       ),
     );

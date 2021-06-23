@@ -28,21 +28,22 @@ class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        body: SingleChildScrollView(
-          child: SafeArea(
-            child: FutureBuilder(
-              future: Future.wait([httpHandler.getEntorno(), httpHandler.getUsuario(), httpHandler.getReserva()]),
-              builder: (BuildContext context, AsyncSnapshot snapshot) {
-                if(snapshot.hasData){
-                  Entorno datos = snapshot.data[0];
-                  Usuario datosUsuario = snapshot.data[1];
-                  ReservaModel datosReserva= snapshot.data[2];
-                  return Column(
+      // SingleChildScrollView
+        body: SafeArea(
+          child: FutureBuilder(
+            future: Future.wait([httpHandler.getEntorno(), httpHandler.getUsuario(), httpHandler.getReserva()]),
+            builder: (BuildContext context, AsyncSnapshot snapshot) {
+              if(snapshot.hasData){
+                Entorno datos = snapshot.data[0];
+                Usuario datosUsuario = snapshot.data[1];
+                ReservaModel datosReserva= snapshot.data[2];
+                return SingleChildScrollView(
+                  child: Column(
                     children: [
                       Stack(
                         children: <Widget> [
                           // Imagen de cabecera
-                          _header(context),
+                          _header(context, datos.baseUrl),
                           Column(
                             children: <Widget> [
                               Container(
@@ -66,8 +67,8 @@ class _HomePageState extends State<HomePage> {
                               ),
                               Row(
                                 children: [
-                                  // ubicación
-                                  _location(),
+                                  // ubicación e idioma
+                                  _location(datos.location, datos.idiom),
                                 ],
                               ),
                               Row(
@@ -106,7 +107,7 @@ class _HomePageState extends State<HomePage> {
                               ),
                             ),
                             // Boton ver reservas
-                            _reservas(datos.themes.accentColor)
+                            _reservas(datos.themes.accentColor, datosReserva.reservations)
                           ],
                         ),
                       ),
@@ -115,18 +116,18 @@ class _HomePageState extends State<HomePage> {
                       // Lista de reservas
                       ListaReservasHome(reservas: datosReserva.reservations)
                     ],
-                  );
-                } else {
-                  return Center(child: CircularProgressIndicator());
-                }
-              },
-            ),
+                  ),
+                );
+              } else {
+                return Center(child: CircularProgressIndicator(color: Theme.of(context).accentColor));
+              }
+            },
           ),
         )
     );
   }
 
-  Widget _header(BuildContext context) {
+  Widget _header(BuildContext context, String imagen) {
     final _screenSize = MediaQuery.of(context).size;
     return Container(
       width: double.infinity,
@@ -134,8 +135,8 @@ class _HomePageState extends State<HomePage> {
       decoration: BoxDecoration(
         borderRadius: BorderRadius.only(bottomLeft: Radius.circular(55)),
         image: DecorationImage(
-            image: AssetImage('assets/imagenes/Group7.png'),
-            // image: NetworkImage("https://i.pinimg.com/originals/c5/cd/3b/c5cd3b24c24a8d0fad4c5480c885c932.jpg"),
+            //image: AssetImage('assets/imagenes/Group7.png'),
+            image: NetworkImage(imagen),
             fit: BoxFit.cover
         ),
       ),
@@ -174,14 +175,14 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _location() {
+  Widget _location(String ubicacion, String idioma) {
     return Container(
       margin: EdgeInsets.only(left: 32),
       child: Row(
         children: <Widget> [
           Icon(Icons.add_location_alt_outlined, color: Colors.grey[400]),
           Text(
-            'Castelló de la Plana, ',
+            ubicacion + ", ",
             style: TextStyle(
               fontWeight: FontWeight.bold,
               fontSize: 14,
@@ -189,7 +190,7 @@ class _HomePageState extends State<HomePage> {
             ),
           ),
           Text(
-            'ES',
+            idioma,
             style: TextStyle(
               fontSize: 14,
               color: Colors.grey,
@@ -239,9 +240,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _reservas(String color) {
+  Widget _reservas(String color, List<Reservation> reservations) {
     return  GestureDetector(
-        onTap: () => {},
+        onTap: () => {Navigator.pushNamed(context, "reservas", arguments: reservations)},
         child: Card(
           color: Theme.of(context).accentColor,
           shape: RoundedRectangleBorder(

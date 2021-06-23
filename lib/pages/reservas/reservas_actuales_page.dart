@@ -1,13 +1,13 @@
+import 'package:animate_do/animate_do.dart';
 import 'package:facilities_v1/models/ReservaModel.dart';
 import 'package:flutter/material.dart';
 
-
-class ListaReservasHome extends StatelessWidget {
+class ReservasActuales extends StatelessWidget  {
   final List<Reservation> reservas;
-  ListaReservasHome({required this.reservas});
+  ReservasActuales({required this.reservas});
 
   List<Widget> listaReservas(BuildContext context, List<Reservation> reservations) {
-    int items = 0;
+ 
     final _screenSize = MediaQuery.of(context).size;
     List<Widget> list = <Widget>[];
     for(Reservation reserva in reservations) {
@@ -16,8 +16,6 @@ class ListaReservasHome extends StatelessWidget {
         if(reserva.costString == 'null') {
           reserva.costString = '0';
         }
-        if(items < 2) {
-          items = items + 1;
           list.add(
             GestureDetector(
               onTap: () => {Navigator.pushNamed(context, "reserva_detalle", arguments: reserva.id)},
@@ -123,21 +121,14 @@ class ListaReservasHome extends StatelessWidget {
               ),
             ),
           );
-        } else {
-          break;
-        }
       } else {
         list.add(Container());
       }
-      
     }
     return list;
   }
 
   Widget icono(String tipo) {
-
-   
-       
       if(tipo == 'WORKSPACES') {
         return  Container(
           width: 65,
@@ -220,7 +211,6 @@ class ListaReservasHome extends StatelessWidget {
         );
       }
     
-
     return Container(
       width: 65,
       height: 65,
@@ -235,19 +225,16 @@ class ListaReservasHome extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Center(
-      child: ScrollConfiguration(
-        behavior: MyBehavior(),
-        child: ListView(
-        shrinkWrap: true,
-        padding: const EdgeInsets.only(left: 23, right: 23),
-        children: listaReservas(context, reservas)
-        )
-        
-      ),
+    return ScrollConfiguration(
+      behavior: MyBehavior(),
+      child: ListView(
+      shrinkWrap: true,
+      padding: const EdgeInsets.only(left: 23, right: 23),
+      children: listaReservas(context, reservas)
+      )
+      
     );
   }
-
 }
 
 // Quitar efecto de tope

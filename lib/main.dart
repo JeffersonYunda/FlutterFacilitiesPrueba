@@ -1,5 +1,6 @@
 import 'package:facilities_v1/blocs/theme.dart';
 import 'package:facilities_v1/routes/routes.dart';
+import 'package:facilities_v1/utils/utils.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -15,7 +16,7 @@ class MyApp extends StatelessWidget{
     return ChangeNotifierProvider(
       create: ( _ ) => ThemeChanger( ThemeData(
         primaryColor: Colors.white,
-        accentColor: Colors.blue,
+        accentColor: Color(colorHexadecimal('#39FE90')),
         secondaryHeaderColor: Colors.green,
         fontFamily: 'anext'
       )),
@@ -34,7 +35,7 @@ class MaterialAppWithTheme  extends StatelessWidget {
       theme: theme.getTheme(),
       debugShowCheckedModeBanner: false,
       title: 'Reservas',
-      initialRoute: 'reservar_puesto',
+      initialRoute: 'login',
       routes: appRoutes,
     );
   }
