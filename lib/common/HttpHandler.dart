@@ -221,42 +221,6 @@ class HttpHandler {
 
 
 
-
-
-  void pruebaLogin(usuario, pass) async {
-
-    try{
-      var url = 'https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io/login';
-
-      Map jsonBody = {"username": "prueba55", "password": "123"};
-
-      var response = await http.post(Uri.parse(url),
-          headers: {
-            "Authorization": "Bearer JWT_TOKEN",
-            "APP_PLATFORM": "android",
-            "APP_VERSION": "1.0",
-            "APP_PACKAGE": "com.480.facilityreservation",
-            "DEVICE_LANGUAGE": "es",
-            "Content-Type": "application/json",
-          },
-          body: jsonEncode(jsonBody)
-
-      ).then((response) {
-        print(response.statusCode);
-      });
-
-
-
-
-    } on Error catch(e) {
-      print('Http error');
-    }
-
-  }
-
-
-
-
   Future<void> getToken() async {
     String url = 'https://92d98850-e5c8-4d80-ad4d-1ee96c686a24.mock.pstmn.io/login';
     Map<String, String> headers = {
@@ -266,16 +230,18 @@ class HttpHandler {
       "APP_PACKAGE": "com.480.facilityreservation",
       "DEVICE_LENGUAGE": "es",
       "Content-Type": "application/json",
+      "Accept" : "application/json",
 
     };
 
-    var body = jsonEncode({
-      "username": 'prueba22',
-      "password": '123'
-    });
+    Map<String, dynamic> body = {
+      "username": "prueba22",
+      "password": "12ppp3"
+    };
 
 
-    http.Response response = await http.post(Uri.parse(url), headers: headers, body: body);
+
+    http.Response response = await http.post(Uri.parse(url), headers: headers, body: jsonEncode(body));
 
     int statusCode = response.statusCode;
     print('statuscode: $statusCode');
