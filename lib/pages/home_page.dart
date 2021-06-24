@@ -1,5 +1,8 @@
 import 'dart:convert';
 
+import 'package:appcenter/appcenter.dart';
+import 'package:appcenter_analytics/appcenter_analytics.dart';
+import 'package:appcenter_crashes/appcenter_crashes.dart';
 import 'package:facilities_v1/Widgets/lista_botones_home_widget.dart';
 import 'package:facilities_v1/Widgets/lista_reservas_home_widget.dart';
 import 'package:facilities_v1/Widgets/proxima_reserva_widget.dart';
@@ -10,6 +13,7 @@ import 'package:facilities_v1/models/Entorno.dart';
 import 'package:facilities_v1/models/ReservaModel.dart';
 import 'package:facilities_v1/models/Usuario.dart';
 import 'package:facilities_v1/utils/utils.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 import 'package:provider/provider.dart';
@@ -24,6 +28,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
 
   final httpHandler = new HttpHandler();
+
+
+  void initAppCenter() async {
+    final android = defaultTargetPlatform == TargetPlatform.android;
+    var app_secret = android ? "AndroidGuid" : "321cfac9-123b-123a-123f-123273416a48";
+    await AppCenter.start(app_secret, [AppCenterAnalytics.id, AppCenterCrashes.id]);
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    initAppCenter();
+  }
+
 
   @override
   Widget build(BuildContext context) {

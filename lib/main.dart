@@ -5,6 +5,12 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+//appCenter
+import 'package:appcenter/appcenter.dart';
+import 'package:appcenter_analytics/appcenter_analytics.dart';
+import 'package:appcenter_crashes/appcenter_crashes.dart';
+import 'package:flutter/foundation.dart';
+
 
 void main(){
   runApp(MyApp());
@@ -35,7 +41,7 @@ class MaterialAppWithTheme  extends StatelessWidget {
       theme: theme.getTheme(),
       debugShowCheckedModeBanner: false,
       title: 'Reservas',
-      initialRoute: 'reservar_puesto',
+      initialRoute: 'home',
       routes: appRoutes,
     );
   }
