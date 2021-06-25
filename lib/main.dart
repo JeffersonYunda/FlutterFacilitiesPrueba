@@ -41,7 +41,7 @@ class MaterialAppWithTheme  extends StatelessWidget {
     return MaterialApp(
       theme: theme.getTheme(),
       debugShowCheckedModeBanner: false,
-      title: 'Reservas',
+      title: 'Re',
       initialRoute: 'home',
       routes: appRoutes,
     );
